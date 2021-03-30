@@ -1,5 +1,5 @@
 #==================================================================================================
-# FISH 622 homework #3: Growth and per-recruit analysis
+# FISH 622 Homework #3: Growth and per-recruit analysis
 # 3/23/2021
 # Luke Henslee, College of Fisheries and Ocean Sciences, UAF
 #
@@ -13,12 +13,12 @@ library(tidyverse)
 library(ggplot2)
 library(bbmle)
 library(dplyr)
+library(manipulate)
 
-setwd("C:/Users/lhhenslee/Desktop/Luke/School/F622")
-hw2.data <- file.path(getwd(), "data")
-hw2.data
+# Set working directory
+setwd("C:/Users/lhhenslee/Desktop/Luke/School/F622/data")
 
-# Problem 1- Estimateing differences in Northern Rockfish growth ####
+# Problem 1- Estimating differences in Northern Rockfish growth ####
 
 # 1.1- Load dataset 
 goa <- read.csv("goa_race_specimen.csv", header=TRUE, skip=6)
