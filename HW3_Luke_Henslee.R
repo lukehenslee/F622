@@ -70,10 +70,9 @@ LVB_fit_female <- mle2(NLL_LVB,
                        optimizer = "nlminb",
                        control = list(maxit = 1e6))
 
-exp(coef(LVB_fit_female))
 Linf.female <- as.numeric(exp(coef(LVB_fit_female)[1]))
 k.female <- as.numeric(exp(coef(LVB_fit_female)[2]))
-t0.female <- as.numeric(exp(coef(LVB_fit_female)[3]))
+t0.female <- as.numeric(coef(LVB_fit_female)[3])
 
   # Males
 nr.male <- filter(nr.dat, nr.dat$Sex == "Male")
@@ -87,14 +86,22 @@ LVB_fit_male <- mle2(NLL_LVB,
                        optimizer = "nlminb",
                        control = list(maxit = 1e6))
 
-exp(coef(LVB_fit_male))
 Linf.male <- as.numeric(exp(coef(LVB_fit_male)[1]))
 k.male <- as.numeric(exp(coef(LVB_fit_male)[2]))
-t0.male <- as.numeric(exp(coef(LVB_fit_male)[3]))
+t0.male <- as.numeric(coef(LVB_fit_male)[3])
 
 # 1.7- Report parameter estimates
-exp(coef(LVB_fit_female))
-exp(coef(LVB_fit_male))
+  # For females
+cat(paste("LVB parameter estimates for female northern rockfish\n", 
+          "Linf estimate:", exp(coef(LVB_fit_female)[1]), "\n", "k estimate:", 
+          exp(coef(LVB_fit_female)[2]), "\n", "t0 estimate:", coef(LVB_fit_female)[3]), 
+    "\n", "sigma estimate:", exp(coef(LVB_fit_female)[4]))
+
+  # For males
+cat(paste("LVB parameter estimates for male northern rockfish\n", 
+          "Linf estimate:", exp(coef(LVB_fit_male)[1]), "\n", "k estimate:", 
+          exp(coef(LVB_fit_male)[2]), "\n", "t0 estimate:", coef(LVB_fit_male)[3]), 
+    "\n", "sigma estimate:", exp(coef(LVB_fit_male)[4]))
 
 summary(LVB_fit_female)
 summary(LVB_fit_male)
@@ -167,7 +174,10 @@ wl_fit <- mle2(NLL_wl,
                optimizer = "nlminb",
                control = list(maxit = 1e6))
 
-exp(coef(wl_fit))
+cat(paste("Length-weight parameter estimates for Eastern Bering pollock\n", 
+          "Alpha:", exp(coef(wl_fit)[1]), "\n", "Beta:", 
+          exp(coef(wl_fit)[2]), "\n", "sigma:", exp(coef(wl_fit)[3])))
+
 pol.alpha <- as.numeric(exp(coef(wl_fit)[1]))
 pol.beta <- as.numeric(exp(coef(wl_fit)[2]))
 
@@ -190,10 +200,14 @@ LVB_fit_pol <- mle2(NLL_LVB,
                     optimizer = "nlminb",
                     control = list(maxit = 1e6))
 
-exp(coef(LVB_fit_pol))
+cat(paste("LVB parameter estimates for Eastern Bering pollock\n", 
+          "Linf estimate:", exp(coef(LVB_fit_pol)[1]), "\n", "k estimate:", 
+          exp(coef(LVB_fit_pol)[2]), "\n", "t0 estimate:", coef(LVB_fit_pol)[3]), 
+    "\n", "sigma estimate:", exp(coef(LVB_fit_pol)[4]))
+
 Linf.pol <- as.numeric(exp(coef(LVB_fit_pol)[1]))
 k.pol <- as.numeric(exp(coef(LVB_fit_pol)[2]))
-t0.pol <- as.numeric(exp(coef(LVB_fit_pol)[3]))
+t0.pol <- as.numeric(coef(LVB_fit_pol)[3])
 
 # 3.7- Plot model output versus observations 
 pol.dat$LVB <- pred_LVB(pol.dat$Age..years., Linf.pol, k.pol, t0.pol)
@@ -234,7 +248,7 @@ plot(N ~ ages, xlab = "", ylab = "Abundance",
 plot(waa ~ ages, xlab = "", ylab = "Weight (g)")
 plot(B ~ ages, xlab = "Age", ylab = "Biomass (g)")
 
-# Maximum biomass is reached at age 6 for this cohort
+# Maximum biomass is reached at age 5 for this cohort
 
 # Repeat above with different values for natural mortality 
 
@@ -264,3 +278,4 @@ plot(waa ~ ages, xlab = "", ylab = "Weight (g)")
 plot(B.2 ~ ages, xlab = "Age", ylab = "Biomass (g)")
 
 # Maximum biomass is reached at age 6 for this cohort
+
