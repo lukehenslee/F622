@@ -94,7 +94,7 @@ Okay, not bad. I'm going to simplify things by assigning a '0' to negative anoma
 ```{r}
 dir.npgo <- vector(length = nrow(npgo.pdo.sub))
 
-for(i in 1:length(dir)){
+for(i in 1:length(dir.npgo)){
   if(npgo.pdo.sub[i,3] > 0) {
     dir.npgo[i] = 1
   } else {
@@ -104,7 +104,7 @@ for(i in 1:length(dir)){
 
 dir.pdo <- vector(length = nrow(npgo.pdo.sub))
 
-for(i in 1:length(dir)){
+for(i in 1:length(dir.pdo)){
   if(npgo.pdo.sub[i,4] > 0) {
     dir.pdo[i] = 1
   } else {
@@ -130,12 +130,11 @@ ggplot(data = npgo.pdo.sub, aes(x = Year, y = Mon)) +
   geom_vline(xintercept = 1989, color = "red", linetype = "dashed", size = 1.5) 
 ```
 
+I kind of like it! I don't know if it qualifies as a heatmap, but it does show us some interesting visuals about the relationship between the two indicies.
 <br/><br/>
 
-I kind of like it! I don't know if it qualifies as a heatmap, but it does show us some interesting visuals about the relationship between the two indicies.
-
 #### 5) What do you notice in each of the plots near the regime shifts at 1977 and 1989?  
-So we've gone back through and added dotted vertical lines marking the regime shifts to our plots. The heatmap showing NPGO anomolies indicates that around 1977, differences from the mean began trending a little more toward the positive, and a lot more positive after 1989 and more extreme. Almost all anomalies in the PDO index between the regime shifts are in the positive direction, and after 1989 they get more extreme and mostly stay positive.  It looks like the NPGO and PDO were more likely to trend together and in the same direction before the 1977 regime shift, and began to fluctuate in different directions more often afterward. From 1989 on, anomalies in the indicies have been more extreme and tend to deviate from the mean in different directions. 
+So we've gone back through and added dotted vertical lines marking the regime shifts to our plots. The heatmap showing NPGO anomolies indicates that around 1977 differences from the mean began trending a little more toward the positive, and a lot more positive after 1989 and more extreme. Almost all anomalies in the PDO index between the regime shifts are in the positive direction, and after 1989 they get more extreme and mostly stay positive.  It looks like the NPGO and PDO were more likely to trend together and in the same direction before the 1977 regime shift, and began to fluctuate in different directions more often afterward. From 1989 on, anomalies in the indicies have been more extreme and tend to deviate from the mean in different directions. 
 
 ### Task 2: Plotting multiple proportions
 #### 1) Import data
@@ -143,36 +142,98 @@ So we've gone back through and added dotted vertical lines marking the regime sh
 ```{r}
 narw <- read.csv("NARW_mort.csv", fileEncoding="UTF-8-BOM")
 ```
+
+Have to include the 'fileEncoding = "UTF-8_BOM"', otherwise there are strange symbols in the column heads. I've run into this problem before when the .csv file was uploaded from a MAC. 
 <br/><br/>
 
 #### 2) Create mosiac plot
+
+First I would like to create a mosaic plot that will show proportions of sex, country, and cause of death for Northern Atalantic Right Wales.
 
 ```{r}
 library(ggmosaic)
 
 ggplot(data = narw) +
   geom_mosaic(aes(x = product(Country, CauseDeath), fill = Sex)) +
-  scale_fill_manual(values = c("#66CC00", "#0080FF"), labels = c("Female", "Male")) +
+  scale_fill_manual(values = c("#88CCEE", "#DDCC77"), labels = c("Female", "Male")) +
   annotate("text", x = .15, y = .5, label = "Entanglement", angle = 90, size = 10, alpha = .5) +
     annotate("text", x = .48, y = .5, label = "Undetermined", angle = 90, size = 10, alpha = .5) +
   annotate("text", x = .85, y = .5, label = "Vessel Strike", angle = 90, size = 10, alpha = .5) +
-  labs(y = "Country", x = "Cause of Death", title = "Right Whale mortality by sex, country, and cause of death") +
+  labs(y = "", x = "") +
   theme_minimal() +
   theme(panel.grid.major = element_blank()) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 ```
 
+I think it looks pretty good. It gives us a good idea of mortality proportions, but unfortunately this doesn't show us the year of the data.  I'm going to attempt to create a treemap a la Wilke, let's see how it does. 
+
+```{r}
+ggplot(data = narw) +
+  geom_mosaic(aes(x = product(Country, Year, CauseDeath), fill = Sex)) +
+  scale_fill_manual(values = c("#88CCEE", "#DDCC77"), labels = c("Female", "Male")) +
+  annotate("text", x = .15, y = .5, label = "Entanglement", angle = 90, size = 10, alpha = .5) +
+    annotate("text", x = .48, y = .5, label = "Undetermined", angle = 90, size = 10, alpha = .5) +
+  annotate("text", x = .85, y = .5, label = "Vessel Strike", angle = 90, size = 10, alpha = .5) +
+  annotate("text", x = -.03, y = .25, label = "2017", angle = 90, size = 5, alpha = .5) +
+  annotate("text", x = -.03, y = .75, label = "2019", angle = 90, size = 5, alpha = .5) +
+  annotate("text", x = .07, y = -.04, label = "USA", size = 3,  alpha = .5) +
+  annotate("text", x = .2, y = -.04, label = "Canada", size = 3,  alpha = .5) +
+  annotate("text", x = .43,  y = -.04, label = "USA", size = 3,  alpha = .5) +
+  annotate("text", x = .63, y = -.04, label = "Canada", size = 3,  alpha = .5) +
+  annotate("text", x = .83,  y = -.04, label = "USA", size = 3,  alpha = .5) +
+  annotate("text", x = .98, y = -.04, label = "Canada", size = 3,  alpha = .5) +
+  labs(x = "", y = "") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank(), panel.grid.major = element_blank()) 
+```
+
+Eh, we fit all the varibles in, but what a pain to have to manually place each of our labels. I know there is a better way and I actually looked up Wilke's source code for his treemaps on github, turns out there is a package called 'treemapify'. 
+<br/><br/>
+
+#### 3) Create treemap
+
+```{r}
+library(treemapify)
+
+# Have to create a new variable called "count", which geom_treemap requires for the 'area' argument. 
+narw$count <- 1
+
+ggplot(narw, aes(area = count, fill = Sex,
+                subgroup = CauseDeath, subgroup2 = Country, subgroup3 = Year, label = "")) +
+  geom_treemap() +
+  geom_treemap_subgroup_border() +
+  geom_treemap_subgroup_text(place = "bottom", grow = T, alpha = 0.2, colour =
+                             "black", fontface = "italic") +
+  geom_treemap_text(colour = "white", place = "top") +
+  geom_treemap_subgroup2_text(place = "top", grow = F, alpha = 0.5, colour =
+                             "black") +
+  geom_treemap_subgroup3_text(place = "centre", grow = F, alpha = 0.5, colour =
+                             "black", ) +
+  scale_fill_manual(values = c("#88CCEE", "#DDCC77"), labels = c("Female", "Male"), name = "Sex")
+```
+
+So, the area argument uses a numeric variable, so if our data had a count of each cause of death, of each sex, in each country, in each year, then we would change the shape of the rectangle. In this method, there is just a tile for each observation, so it serves the same purpose but the shape isn't a rectangle its some kind of tetris shape. This plot is functional, but yeah, a little brain-achey. 
+
+Next I'm going to create small multiples to try to show all four variables in the dataset.
+<br/><br/>
+
+#### 4) Create small multiples
 
 ```{r}
 ggplot(narw, aes(x = Country, y = CauseDeath, fill = Sex)) +
-  geom_point(shape=21, position = position_jitter(w = .2, h = .2), size = 4, alpha = .5) +
-  scale_fill_manual(values = c("#66CC00", "#0080FF")) +
-  facet_grid(CauseDeath~Year) +
-  labs(y = "Cause of death", x = "Country", title = "Right Whale mortality by sex, country, and cause of death") +
+  geom_point(shape=21, position = position_jitter(w = .15, h = .2), size = 4, alpha = .5) +
+  scale_fill_manual(values = c("#88CCEE", "#DDCC77"), labels = c("Female", "Male")) +
+  facet_wrap(narw$Year, ncol = 2) +
+  labs(y = "", x = "") +
   theme_bw() +
-  theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+  scale_y_discrete(labels = c("Entaglement", "Undetermined", "Vessel strike")) +
+  theme(axis.text.y = element_text(face = "bold", angle = 90, hjust = .5), axis.ticks = element_blank())
 ```
 
+This shows us all of the information in our dataset, but I think a table would do this job better.  I'm starting to realize how in-depth these plots can be.
+
+#### 5) Conclusions
+Especially after looking at Wilke's source code for his plots, I'm realizing that codes can be hundreds of lines for a single plot. I know R is good for customizing every little thing in your plot, but sometimes it seems like Excel would be easier.  I feel like I learned a lot however, and utilized new packages such as "ggmosaic" and "treemapify". 
 
 
 
