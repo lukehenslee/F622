@@ -89,7 +89,7 @@ glassplot_lm
 dev.new(width = 2.75, height = 1.83, units = "in", noRStudioGD = TRUE)
 last_plot()
 
-ggsave(file = "Pub_ready_figure_1b_LH.png", width = dev.size()[1], height = dev.size()[2], dpi = 300)
+ggsave(file = "Pub_ready_figure_1b_LH.jpeg", width = dev.size()[1], height = dev.size()[2], dpi = 300)
 dev.off()
 ```
 
@@ -128,6 +128,6 @@ glassplot2
 dev.new(width = 2.75, height = 1.83, units = "in", noRStudioGD = TRUE)
 last_plot()
 
-ggsave(file = "Pub_ready_figure_2_LH.png", width = dev.size()[1], height = dev.size()[2], dpi = 300)
+ggsave(file = "Pub_ready_figure_2_LH.jpeg", width = dev.size()[1], height = dev.size()[2], dpi = 300)
 ```
 
